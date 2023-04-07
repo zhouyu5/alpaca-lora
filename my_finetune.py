@@ -119,7 +119,7 @@ def train(
             0  # unk. we want this to be different from the eos token
         )
         fp16_train = True
-    elif 'gpt-j' in base_model:
+    elif 'gpt' in base_model:
         tokenizer = AutoTokenizer.from_pretrained(base_model)
         model = AutoModelForCausalLM.from_pretrained(
             base_model,

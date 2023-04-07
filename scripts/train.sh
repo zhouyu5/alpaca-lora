@@ -1,6 +1,6 @@
 
 # # llama
-# python finetune.py \
+# python my_finetune.py \
 #     --base_model '/home/vmagent/app/data/llama-7b-hf' \
 #     --data_path '/home/vmagent/app/data/alpaca-cleaned' \
 #     --output_dir '/home/vmagent/app/data/zy_models/lora-alpaca-1' \
@@ -14,7 +14,7 @@
 
 
 # gpt-j
-python finetune.py \
+python my_finetune.py \
     --base_model '/home/vmagent/app/data/gpt-j-6b' \
     --data_path '/home/vmagent/app/data/alpaca-cleaned' \
     --output_dir '/home/vmagent/app/data/zy_models/lora-gptj' \
@@ -28,7 +28,7 @@ python finetune.py \
 
 
 # # opt
-# python finetune.py \
+# python my_finetune.py \
 #     --base_model '/home/vmagent/app/data/opt-6.7b' \
 #     --data_path '/home/vmagent/app/data/alpaca-cleaned' \
 #     --output_dir '/home/vmagent/app/data/zy_models/lora-opt' \
