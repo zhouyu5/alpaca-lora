@@ -2,6 +2,7 @@
 
 - 🤗 **Try the pretrained model out [here](https://huggingface.co/spaces/tloen/alpaca-lora), courtesy of a GPU grant from Huggingface!**
 - Users have created a Discord server for discussion and support [here](https://discord.gg/prbq284xX5)
+- 4/6: Repo has been updated with Microsoft Research's [LLaMA-GPT4 dataset](https://github.com/Instruction-Tuning-with-GPT-4/GPT-4-LLM).
 
 This repository contains code for reproducing the [Stanford Alpaca](https://github.com/tatsu-lab/stanford_alpaca) results using [low-rank adaptation (LoRA)](https://arxiv.org/pdf/2106.09685.pdf).
 We provide an Instruct model of similar quality to `text-davinci-003` that can run [on a Raspberry Pi](https://twitter.com/miolini/status/1634982361757790209) (for research),
@@ -163,9 +164,12 @@ docker-compose down --volumes --rmi all
     - 🇫🇷 <https://huggingface.co/bofenghuang/vigogne-lora-7b>
     - 🇹🇭 <https://huggingface.co/Thaweewat/thai-buffala-lora-7b-v0-1>
     - 🇩🇪 <https://huggingface.co/thisserand/alpaca_lora_german>
+    - 🇵🇱 <https://huggingface.co/mmosiolek/polpaca-lora-7b>
     - 🇮🇹 <https://huggingface.co/teelinsan/camoscio-7b-llama>
     - 🇷🇺 <https://huggingface.co/IlyaGusev/llama_7b_ru_turbo_alpaca_lora>
+    - 🇺🇦 <https://huggingface.co/robinhad/ualpaca-7b-llama>
   - 13B:
+    - <https://huggingface.co/Angainor/alpaca-lora-13b>
     - <https://huggingface.co/chansung/alpaca-lora-13b>
     - <https://huggingface.co/mattreid/alpaca-lora-13b>
     - <https://huggingface.co/samwit/alpaca13B-lora>
@@ -177,6 +181,8 @@ docker-compose down --volumes --rmi all
     - <https://huggingface.co/baseten/alpaca-30b>
     - <https://huggingface.co/chansung/alpaca-lora-30b>
     - 🇯🇵 <https://huggingface.co/kunishou/Japanese-Alapaca-LoRA-30b-v0>
+  - 65B
+    - <https://huggingface.co/chansung/alpaca-lora-65b>
 - [alpaca-native](https://huggingface.co/chavinlo/alpaca-native), a replication using the original Alpaca code
 
 ### Example outputs
