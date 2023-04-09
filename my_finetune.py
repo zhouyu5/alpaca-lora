@@ -7,11 +7,7 @@ import torch
 import transformers
 from datasets import load_dataset
 
-"""
-Unused imports:
-import torch.nn as nn
 import bitsandbytes as bnb
-"""
 
 from peft import (
     LoraConfig,
@@ -119,17 +115,46 @@ def train(
             0  # unk. we want this to be different from the eos token
         )
         fp16_train = True
-    elif 'gpt' in base_model:
+        model = prepare_model_for_int8_training(model)
+    elif 'gpt2' in base_model.lower() or 'gpt-neo' in base_model.lower():
         tokenizer = AutoTokenizer.from_pretrained(base_model)
         model = AutoModelForCausalLM.from_pretrained(
             base_model,
-            load_in_8bit=True,
+            # load_in_8bit=True,
             torch_dtype=torch.float16,
             device_map=device_map,
         )
+        tokenizer.pad_token_id = (
+            0  # unk. we want this to be different from the eos token
+        )
+        fp16_train = True
+        # model = prepare_model_for_int8_training(model)
+    elif 'gpt-j' in base_model.lower():
+        tokenizer = AutoTokenizer.from_pretrained(base_model)
+        model = AutoModelForCausalLM.from_pretrained(
+            base_model,
+            # load_in_8bit=True,
+            torch_dtype=torch.float16,
+            device_map=device_map,
+        )
+        tokenizer.pad_token_id = (
+            0  # unk. we want this to be different from the eos token
+        )
         fp16_train = False
+        model.is_loaded_in_8bit = True
+        model = prepare_model_for_int8_training(model, layer_norm_names=[], output_embedding_layer_name="xxxx")
+        model.is_loaded_in_8bit = False
     else:
         raise NotImplementedError
+
+    config = LoraConfig(
+        r=lora_r,
+        lora_alpha=lora_alpha,
+        target_modules=lora_target_modules,
+        lora_dropout=lora_dropout,
+        bias="none",
+        task_type="CAUSAL_LM",
+    )
 
     tokenizer.padding_side = "left"  # Allow batched inference
 
@@ -176,16 +201,6 @@ def train(
             ]  # could be sped up, probably
         return tokenized_full_prompt
 
-    model = prepare_model_for_int8_training(model)
-
-    config = LoraConfig(
-        r=lora_r,
-        lora_alpha=lora_alpha,
-        target_modules=lora_target_modules,
-        lora_dropout=lora_dropout,
-        bias="none",
-        task_type="CAUSAL_LM",
-    )
     model = get_peft_model(model, config)
 
     if data_path.endswith(".json") or data_path.endswith(".jsonl"):
