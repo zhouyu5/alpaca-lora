@@ -25,7 +25,7 @@
 python my_finetune.py \
     --base_model '/home/vmagent/app/data/gpt-j-6b' \
     --data_path '/home/vmagent/app/data/alpaca-cleaned' \
-    --output_dir '/home/vmagent/app/data/zy_models/lora-gptj' \
+    --output_dir '/home/vmagent/app/data/zy_models/lora-temp' \
     --batch_size 128 \
     --num_epochs=1 \
     --cutoff_len=512 \
