@@ -6,7 +6,7 @@ import gradio as gr
 import torch
 import transformers
 from peft import PeftModel
-from transformers import GenerationConfig, LlamaForCausalLM, LlamaTokenizer
+from transformers import GenerationConfig, LlamaForCausalLM, LlamaTokenizer, AutoTokenizer, AutoModelForCausalLM
 
 from utils.callbacks import Iteratorize, Stream
 from utils.prompter import Prompter
@@ -37,10 +37,20 @@ def main(
     ), "Please specify a --base_model, e.g. --base_model='decapoda-research/llama-7b-hf'"
 
     prompter = Prompter(prompt_template)
-    tokenizer = LlamaTokenizer.from_pretrained(base_model)
+
+    if 'lama' in base_model:
+        tokenizer = LlamaTokenizer.from_pretrained(base_model)
+    else:
+        tokenizer = AutoTokenizer.from_pretrained(base_model)
+
+    model_revision = "main"
+    if 'gpt-j' in base_model:
+        model_revision = "float16"
+    
     if device == "cuda":
-        model = LlamaForCausalLM.from_pretrained(
+        model = AutoModelForCausalLM.from_pretrained(
             base_model,
+            revision=model_revision,
             load_in_8bit=load_8bit,
             torch_dtype=torch.float16,
             device_map="auto",
@@ -51,8 +61,9 @@ def main(
             torch_dtype=torch.float16,
         )
     elif device == "mps":
-        model = LlamaForCausalLM.from_pretrained(
+        model = AutoModelForCausalLM.from_pretrained(
             base_model,
+            revision=model_revision,
             device_map={"": device},
             torch_dtype=torch.float16,
         )
@@ -63,8 +74,10 @@ def main(
             torch_dtype=torch.float16,
         )
     else:
-        model = LlamaForCausalLM.from_pretrained(
-            base_model, device_map={"": device}, low_cpu_mem_usage=True
+        model = AutoModelForCausalLM.from_pretrained(
+            base_model, 
+            revision=model_revision,
+            device_map={"": device}, low_cpu_mem_usage=True
         )
         model = PeftModel.from_pretrained(
             model,
