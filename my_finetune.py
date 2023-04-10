@@ -291,6 +291,9 @@ def train(
         "\n If there's a warning about missing keys above, please disregard :)"
     )
 
+    # print('\n Pushing model to Huggingface Hub')
+    # model.push_to_hub("nathan0/lora-gpt-j-alpaca", use_auth_token=True)
+
 
 if __name__ == "__main__":
     fire.Fire(train)
