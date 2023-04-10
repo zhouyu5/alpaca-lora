@@ -25,8 +25,8 @@ except:  # noqa: E722
 
 def main(
     load_8bit: bool = False,
-    base_model: str = "gpt2",
-    lora_weights: str = "nathan0/lora-gpt2-alpaca",
+    base_model: str = "EleutherAI/gpt-neo-125m",
+    lora_weights: str = "nathan0/lora-gpt-neo-125m-alpaca",
     prompt_template: str = "",  # The prompt template to use, will default to alpaca.
     server_name: str = "0.0.0.0",  # Allows to listen on all interfaces by providing '0.
     share_gradio: bool = False,
