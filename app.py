@@ -90,7 +90,7 @@ def main(
     model.config.bos_token_id = 1
     model.config.eos_token_id = 2
 
-    if not load_8bit:
+    if not load_8bit and torch.cuda.is_available():
         model.half()  # seems to fix bugs for some users.
 
     model.eval()
