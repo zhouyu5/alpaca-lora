@@ -21,8 +21,6 @@ from utils.prompter import Prompter
 
 
 def train(
-    # device params
-    run_device: str = "gpu",  # options: gpu | cpu
     # model/data params
     base_model: str = "",  # the only required argument
     data_path: str = "yahma/alpaca-cleaned",
@@ -57,7 +55,6 @@ def train(
     if int(os.environ.get("LOCAL_RANK", 0)) == 0:
         print(
             f"Training Alpaca-LoRA model with params:\n"
-            f"running device: {run_device}\n"
             f"base_model: {base_model}\n"
             f"data_path: {data_path}\n"
             f"output_dir: {output_dir}\n"
@@ -106,13 +103,11 @@ def train(
     if len(wandb_log_model) > 0:
         os.environ["WANDB_LOG_MODEL"] = wandb_log_model
 
-    if run_device == 'gpu':
+    if torch.cuda.is_available():
         load_torch_dtype = torch.float16
-    elif run_device == 'cpu':
+    else:
         load_torch_dtype = torch.float32
         fp16_train = False
-    else:
-        raise NotImplementedError
     
     gpt_series = ['gpt2', 'gpt-neo', 'gpt-j']
 
