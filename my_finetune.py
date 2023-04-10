@@ -7,7 +7,6 @@ import torch
 import transformers
 from datasets import load_dataset
 
-import bitsandbytes as bnb
 
 from peft import (
     LoraConfig,
@@ -22,6 +21,8 @@ from utils.prompter import Prompter
 
 
 def train(
+    # device params
+    run_device: str = "gpu",  # options: gpu | cpu
     # model/data params
     base_model: str = "",  # the only required argument
     data_path: str = "yahma/alpaca-cleaned",
@@ -33,6 +34,7 @@ def train(
     learning_rate: float = 3e-4,
     cutoff_len: int = 256,
     val_set_size: int = 2000,
+    fp16_train: bool = True,
     # lora hyperparams
     lora_r: int = 8,
     lora_alpha: int = 16,
@@ -55,6 +57,7 @@ def train(
     if int(os.environ.get("LOCAL_RANK", 0)) == 0:
         print(
             f"Training Alpaca-LoRA model with params:\n"
+            f"running device: {run_device}\n"
             f"base_model: {base_model}\n"
             f"data_path: {data_path}\n"
             f"output_dir: {output_dir}\n"
@@ -103,44 +106,39 @@ def train(
     if len(wandb_log_model) > 0:
         os.environ["WANDB_LOG_MODEL"] = wandb_log_model
 
+    if run_device == 'gpu':
+        load_torch_dtype = torch.float16
+    elif run_device == 'cpu':
+        load_torch_dtype = torch.float32
+        fp16_train = False
+    else:
+        raise NotImplementedError
+    
+    gpt_series = ['gpt2', 'gpt-neo', 'gpt-j']
+
     if 'lama' in base_model:
         tokenizer = LlamaTokenizer.from_pretrained(base_model)
         model = LlamaForCausalLM.from_pretrained(
             base_model,
             load_in_8bit=True,
-            torch_dtype=torch.float16,
+            torch_dtype=load_torch_dtype,
             device_map=device_map,
         )
         tokenizer.pad_token_id = (
             0  # unk. we want this to be different from the eos token
         )
-        fp16_train = True
         model = prepare_model_for_int8_training(model)
-    elif 'gpt2' in base_model.lower() or 'gpt-neo' in base_model.lower():
+    elif any(gpt_name in base_model.lower() for gpt_name in gpt_series):
         tokenizer = AutoTokenizer.from_pretrained(base_model)
         model = AutoModelForCausalLM.from_pretrained(
             base_model,
             # load_in_8bit=True,
-            torch_dtype=torch.float16,
+            torch_dtype=load_torch_dtype,
             device_map=device_map,
         )
         tokenizer.pad_token_id = (
             0  # unk. we want this to be different from the eos token
         )
-        fp16_train = True
-        # model = prepare_model_for_int8_training(model)
-    elif 'gpt-j' in base_model.lower():
-        tokenizer = AutoTokenizer.from_pretrained(base_model)
-        model = AutoModelForCausalLM.from_pretrained(
-            base_model,
-            # load_in_8bit=True,
-            torch_dtype=torch.float16,
-            device_map=device_map,
-        )
-        tokenizer.pad_token_id = (
-            0  # unk. we want this to be different from the eos token
-        )
-        fp16_train = False
         model.is_loaded_in_8bit = True
         model = prepare_model_for_int8_training(model, layer_norm_names=[], output_embedding_layer_name="xxxx")
         model.is_loaded_in_8bit = False
