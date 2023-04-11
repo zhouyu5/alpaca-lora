@@ -25,8 +25,8 @@ except:  # noqa: E722
 
 def main(
     load_8bit: bool = False,
-    base_model: str = "EleutherAI/gpt-neo-125m",
-    lora_weights: str = "nathan0/lora-gpt-neo-125m-alpaca",
+    base_model: str = "gpt2-xl",
+    lora_weights: str = "nathan0/lora-gpt2-xl-alpaca",
     prompt_template: str = "",  # The prompt template to use, will default to alpaca.
     server_name: str = "0.0.0.0",  # Allows to listen on all interfaces by providing '0.
     share_gradio: bool = False,
@@ -105,7 +105,7 @@ def main(
         top_k=40,
         num_beams=4,
         max_new_tokens=128,
-        stream_output=False,
+        stream_output=True,
         **kwargs,
     ):
         prompt = prompter.generate_prompt(instruction, input)
@@ -203,8 +203,8 @@ def main(
                 label="Output",
             )
         ],
-        title="🦙🌲 Alpaca-LoRA",
-        description="Alpaca-LoRA is a 7B-parameter LLaMA model finetuned to follow instructions. It is trained on the [Stanford Alpaca](https://github.com/tatsu-lab/stanford_alpaca) dataset and makes use of the Huggingface LLaMA implementation. For more information, please visit [the project's website](https://github.com/tloen/alpaca-lora).",  # noqa: E501
+        title=f"Alpaca-LoRA on {base_model}",
+        description=f"It is finetuned on [{base_model}](https://huggingface.co/{base_model}) to follow instructions from [Stanford Alpaca](https://github.com/tatsu-lab/stanford_alpaca) dataset. ",  # noqa: E501
     ).queue().launch(server_name="0.0.0.0", share=share_gradio)
     # Old testing code follows.
 
