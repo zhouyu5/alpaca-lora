@@ -195,11 +195,11 @@ def main(
             gr.components.Slider(
                 minimum=1, maximum=2000, step=1, value=128, label="Max tokens"
             ),
-            gr.components.Checkbox(label="Stream output"),
+            gr.components.Checkbox(label="Stream output", value=True),
         ],
         outputs=[
             gr.inputs.Textbox(
-                lines=5,
+                lines=6,
                 label="Output",
             )
         ],
