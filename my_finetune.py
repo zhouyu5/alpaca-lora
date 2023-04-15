@@ -110,9 +110,9 @@ def train(
         load_torch_dtype = torch.float32
         fp16_train = False
     
-    gpt_series = ['gpt2', 'gpt-neo', 'gpt-j']
+    gpt_series = ['gpt2', 'gpt-neo', 'gpt-j', 'llama-13b']
 
-    if 'lama' in base_model:
+    if 'lama-7b' in base_model:
         tokenizer = LlamaTokenizer.from_pretrained(base_model)
         model = LlamaForCausalLM.from_pretrained(
             base_model,
