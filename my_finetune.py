@@ -110,7 +110,7 @@ def train(
         load_torch_dtype = torch.float32
         fp16_train = False
     
-    gpt_series = ['gpt2', 'gpt-neo', 'gpt-j', 'llama-13b']
+    gpt_series = ['gpt2', 'gpt-neo', 'gpt-j', 'llama-13b', 'llama-65b']
 
     if 'lama-7b' in base_model:
         tokenizer = LlamaTokenizer.from_pretrained(base_model)
